@@ -1,0 +1,8 @@
+
+services:
+  sentimentai:
+    image: ghcr.io/r4339/sentimentai:latest
+    container_name: sentimentai-app
+    ports:
+      - "8501:8501"
+    restart: unless-stopped

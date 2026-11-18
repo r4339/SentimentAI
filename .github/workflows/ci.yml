@@ -1,1 +1,39 @@
 
+name: SentimentAI - Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - feature/ci-pipeline
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    name: Setup Python environment
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Recuperer le code du projet
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Installer Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 3. Afficher la version de Python
+      - name: Check Python version
+        run: python --version
+
+      # 4. Installer les dependances
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+

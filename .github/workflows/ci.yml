@@ -24,7 +24,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
+
       - name: Préparer le dataset (Parquet -> CSV)
         run: python prepare_data.py
 
@@ -33,6 +33,13 @@ jobs:
 
       - name: Vérifier que le modèle a été créé
         run: ls -lh model_from_csv.pkl    
+
+ # ----- CI v3 : tests automatiques -----
+      - name: Installer pytest
+        run: pip install pytest
+
+      - name: Lancer les tests
+        run: python -m pytest -v  
 
       # (train_model.py et pytest seront ajoutés ici plus tard)
 

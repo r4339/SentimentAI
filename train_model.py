@@ -1,6 +1,7 @@
 """Entraîne et évalue le pipeline IMDb TF-IDF + Logistic Regression."""
 
 import argparse
+import json
 from pathlib import Path
 
 import joblib
@@ -35,11 +36,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("csv_path", type=Path, help="Chemin du fichier CSV IMDb")
     parser.add_argument(
-        "--output",
+     "--output",
         type=Path,
         default=Path(__file__).resolve().parent / "model_from_csv.pkl",
         help="Chemin de sortie (par défaut : model_from_csv.pkl à côté du script)",
     )
+    parser.add_argument(
+        "--metrics",
+            type=Path,
+            default=None,
+            help="Fichier JSON où enregistrer les métriques (optionnel)",
+        )
     args = parser.parse_args()
 
     if not args.csv_path.is_file():
@@ -70,11 +77,26 @@ def main() -> None:
     evaluation_pipeline = build_pipeline()
     evaluation_pipeline.fit(X_train, y_train)
     predictions = evaluation_pipeline.predict(X_test)
+    accuracy = accuracy_score(y_test, predictions)
+    report = classification_report(y_test, predictions, digits=4, output_dict=True)
+
     print(f"Avis : {len(data):,} | Entraînement : {len(X_train):,} | Test : {len(X_test):,}")
-    print(f"Accuracy (test) : {accuracy_score(y_test, predictions):.4f}")
+    print(f"Accuracy (test) : {accuracy:.4f}")
     print("Rapport de classification (test) :")
     print(classification_report(y_test, predictions, digits=4))
 
+    if args.metrics:
+        metrics = {
+            "accuracy": round(accuracy, 4),
+            "f1_macro": round(report["macro avg"]["f1-score"], 4),
+            "f1_positive": round(report["positive"]["f1-score"], 4),
+            "f1_negative": round(report["negative"]["f1-score"], 4),
+            "n_train": len(X_train),
+            "n_test": len(X_test),
+        }
+        args.metrics.parent.mkdir(parents=True, exist_ok=True)
+        args.metrics.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+        print(f"Métriques enregistrées dans : {args.metrics}")
     # Pour l'artefact final, réentraîne le même pipeline sur toutes les données.
     final_pipeline = build_pipeline()
     final_pipeline.fit(data["review"], data["sentiment"])

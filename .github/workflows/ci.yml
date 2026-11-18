@@ -33,6 +33,10 @@ jobs:
 
       - name: Vérifier que le modèle a été créé
         run: ls -lh model_from_csv.pkl    
+        
+       # ----- CI v4 : contrôle qualité du modèle -----
+      - name: Vérifier les métriques du modèle
+        run: python check_metrics.py metrics.json --min-accuracy 0.85 --min-f1 0.85
 
  # ----- CI v3 : tests automatiques -----
       - name: Installer pytest

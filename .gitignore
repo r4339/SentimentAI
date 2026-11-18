@@ -6,3 +6,6 @@ venv/
 .streamlit/secrets.toml
 .env
 .pytest_cache/
+data/imdb.csv
+model_from_csv.pkl
+

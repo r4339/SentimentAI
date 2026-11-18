@@ -37,10 +37,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
  # ---------- Job 2 : construction et publication de l'image ----------
-   docker:
-     needs: build                      # ne démarre que si "build" a réussi
-     runs-on: ubuntu-latest
-     if: github.event_name == 'push'   # on publie seulement sur un push, pas sur une PR
+ docker:
+    needs: build                      # ne démarre que si "build" a réussi
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'   # on publie seulement sur un push, pas sur une PR
 
     permissions:
       contents: read

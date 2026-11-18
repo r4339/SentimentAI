@@ -33,7 +33,7 @@ jobs:
 
       - name: Vérifier que le modèle a été créé
         run: ls -lh model_from_csv.pkl    
-        
+
        # ----- CI v4 : contrôle qualité du modèle -----
       - name: Vérifier les métriques du modèle
         run: python check_metrics.py metrics.json --min-accuracy 0.85 --min-f1 0.85
@@ -46,6 +46,15 @@ jobs:
         run: python -m pytest -v  
 
       # (train_model.py et pytest seront ajoutés ici plus tard)
+ # ----- CI v5 : publication du modèle validé -----
+      - name: Publier le modèle comme artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: model
+          path: |
+            model_from_csv.pkl
+            metrics.json
+          retention-days: 30
 
   # ---------- Job 2 : construction et publication de l'image ----------
   docker:
@@ -60,6 +69,18 @@ jobs:
     steps:
       - name: Récupérer le code
         uses: actions/checkout@v4
+        
+         # ----- CI v5 : récupération du modèle validé -----
+      - name: Télécharger le modèle validé par le job build
+        uses: actions/download-artifact@v4
+        with:
+          name: model
+
+      - name: Remplacer model.pkl par le modèle validé
+        run: |
+          mv model_from_csv.pkl model.pkl
+          ls -lh model.pkl
+
 
       - name: Préparer Docker Buildx
         uses: docker/setup-buildx-action@v3

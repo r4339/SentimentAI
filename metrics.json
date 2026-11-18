@@ -1,0 +1,8 @@
+{
+  "accuracy": 0.8986,
+  "f1_macro": 0.8986,
+  "f1_positive": 0.9,
+  "f1_negative": 0.8972,
+  "n_train": 40000,
+  "n_test": 10000
+}

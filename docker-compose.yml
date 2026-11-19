@@ -5,5 +5,5 @@ services:
     image: sentimentai-app
     container_name: sentimentai-container
     ports:
-      - "8501:8501"
+      - "8502:8501"
     restart: unless-stopped

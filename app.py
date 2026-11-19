@@ -142,6 +142,19 @@ def main() -> None:
         [data-testid="stSidebar"] * {color: #e8eef9;}
         [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {color: #aebbd0;}
         [data-testid="stSidebar"] [data-testid="stRadio"] label p {color: #e8eef9;}
+        [data-testid="stSidebar"] [data-testid="stRadio"] label {
+            padding: .5rem .65rem; border: 1px solid transparent; border-radius: 11px;
+            transition: background .15s ease, border-color .15s ease;
+        }
+        [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+            background: rgba(255,255,255,.08);
+        }
+        [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
+            background: rgba(111,133,238,.22); border-color: rgba(164,180,255,.42);
+        }
+        [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) p {
+            color: #fff !important; font-weight: 700;
+        }
         [data-testid="stSidebar"] hr {border-color: rgba(255,255,255,.16);}
         [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] code {color: #d8e2fa;}
         [data-testid="stMetric"] {
@@ -164,10 +177,11 @@ def main() -> None:
         [data-testid="stTextArea"] textarea:focus {border-color: #7189e2 !important; box-shadow: 0 0 0 3px rgba(73,104,216,.13) !important;}
         .stButton > button[kind="primary"] {
             min-height: 3.1rem; border-radius: 13px; font-weight: 700;
-            background: linear-gradient(100deg, #4968d8, #6a7ee5); border: 0;
+            color: #fff !important; background: linear-gradient(100deg, #4536b8, #6554d8); border: 0;
             box-shadow: 0 8px 18px rgba(73,104,216,.22); transition: transform .15s ease, box-shadow .15s ease;
         }
-        .stButton > button[kind="primary"]:hover {transform: translateY(-1px); box-shadow: 0 11px 22px rgba(73,104,216,.28);}
+        .stButton > button[kind="primary"] * {color: #fff !important;}
+        .stButton > button[kind="primary"]:hover {background: linear-gradient(100deg, #3c2ea8, #5948ca); transform: translateY(-1px); box-shadow: 0 11px 22px rgba(73,104,216,.3);}
         [data-testid="stVerticalBlockBorderWrapper"] {background: #fff; border-color: var(--line) !important; border-radius: 20px !important;}
         .result-card {padding: 1.35rem 1.5rem; border-radius: 18px; margin: 1rem 0 .7rem; border: 1px solid;}
         .result-positive {background: #edf8f4; border-color: #c5e8db; color: #17634f;}

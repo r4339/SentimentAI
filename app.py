@@ -80,27 +80,29 @@ def add_analysis(review: str, sentiment: str, confidence: float | None) -> None:
 
 
 def show_dashboard(history: list[dict[str, Any]]) -> None:
-    st.subheader("Vue d'ensemble")
+    st.markdown('<div class="eyebrow">VOTRE ACTIVITÉ</div>', unsafe_allow_html=True)
+    st.subheader("Vue d’ensemble")
+    st.caption("Un aperçu des avis analysés pendant cette session.")
     total = len(history)
     positive = sum(item["Sentiment"] == "Positive" for item in history)
     negative = sum(item["Sentiment"] == "Negative" for item in history)
     positive_pct = positive / total * 100 if total else 0
 
     columns = st.columns(4)
-    columns[0].metric("Avis analysés", total)
+    columns[0].metric("Avis analysés", total, help="Nombre d’avis traités dans cette session.")
     columns[1].metric("Positifs", positive)
     columns[2].metric("Négatifs", negative)
-    columns[3].metric("Avis positifs", f"{positive_pct:.1f}%")
+    columns[3].metric("Part positive", f"{positive_pct:.1f}%")
 
     st.markdown("#### Répartition des sentiments")
     if total:
         chart_data = pd.DataFrame(
-            {"Nombre d'avis": [positive, negative]},
-            index=["Positif", "Négatif"],
+            {"Positifs": [positive], "Négatifs": [negative]},
+            index=["Avis analysés"],
         )
-        st.bar_chart(chart_data, color=["#16a36a"])
+        st.bar_chart(chart_data, color=["#167d72", "#c65a70"])
     else:
-        st.info("Les statistiques apparaîtront après votre première analyse.")
+        st.info("Votre tableau de bord se remplira dès la première analyse.")
 
 
 def main() -> None:
@@ -108,22 +110,71 @@ def main() -> None:
     st.markdown(
         """
         <style>
-        .block-container {max-width: 1100px; padding-top: 2rem;}
+        :root {
+            --ink: #17243a;
+            --muted: #65738a;
+            --line: #e2e8f0;
+            --accent: #4968d8;
+        }
+        [data-testid="stAppViewContainer"] {background: #f5f7fb; color: var(--ink);}
+        [data-testid="stHeader"] {background: transparent;}
+        .block-container {max-width: 1240px; padding-top: 2.4rem; padding-bottom: 3rem;}
+        h1, h2, h3, h4 {color: var(--ink) !important; letter-spacing: -0.025em;}
+        p, label, [data-testid="stCaptionContainer"] {color: var(--muted);}
+        .eyebrow {
+            color: #4968d8; font-size: .72rem; font-weight: 750;
+            letter-spacing: .14em; margin: 0 0 .45rem 0;
+        }
+        .hero-card {
+            background: linear-gradient(120deg, #182b49 0%, #283f69 58%, #4968d8 100%);
+            border-radius: 24px; padding: 2rem 2.2rem; margin: .7rem 0 1.5rem;
+            color: #fff; box-shadow: 0 18px 42px rgba(26, 45, 78, .16);
+        }
+        .hero-card .hero-kicker {color: #c5d4ff; font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;}
+        .hero-card h2 {color: #fff !important; font-size: 2rem; margin: .55rem 0 .5rem;}
+        .hero-card p {color: #e2eaff; font-size: 1rem; margin: 0; max-width: 720px; line-height: 1.65;}
+        .tip-card {
+            background: #edf2ff; border: 1px solid #dbe5ff; border-radius: 18px;
+            padding: 1.15rem 1.25rem; color: #33466c; line-height: 1.6;
+        }
+        .tip-card strong {color: #253a62;}
+        [data-testid="stSidebar"] {background: linear-gradient(180deg, #17243a 0%, #202f4a 100%);}
+        [data-testid="stSidebar"] * {color: #e8eef9;}
+        [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {color: #aebbd0;}
+        [data-testid="stSidebar"] [data-testid="stRadio"] label p {color: #e8eef9;}
+        [data-testid="stSidebar"] hr {border-color: rgba(255,255,255,.16);}
+        [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] code {color: #d8e2fa;}
         [data-testid="stMetric"] {
-            background: #202a36 !important;
-            border: 1px solid #3b4756 !important;
-            padding: 1rem 1.1rem !important;
-            border-radius: 12px !important;
-            min-height: 112px;
+            background: #fff !important; border: 1px solid var(--line) !important;
+            padding: 1.1rem 1.2rem !important; border-radius: 18px !important;
+            min-height: 112px; box-shadow: 0 5px 18px rgba(26,45,78,.045);
         }
         [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] p {
-            color: #d1d9e2 !important;
-            opacity: 1 !important;
+            color: #65738a !important; opacity: 1 !important;
         }
         [data-testid="stMetricValue"], [data-testid="stMetricValue"] div {
-            color: #ffffff !important;
+            color: #17243a !important;
         }
-        [data-testid="stMetricDelta"] {color: #d1d9e2 !important;}
+        [data-testid="stMetricDelta"] {color: #65738a !important;}
+        [data-testid="stTextArea"] textarea {
+            background: #fff !important; color: #17243a !important;
+            border: 1px solid #d8e0eb !important; border-radius: 15px !important;
+            min-height: 190px; line-height: 1.65;
+        }
+        [data-testid="stTextArea"] textarea:focus {border-color: #7189e2 !important; box-shadow: 0 0 0 3px rgba(73,104,216,.13) !important;}
+        .stButton > button[kind="primary"] {
+            min-height: 3.1rem; border-radius: 13px; font-weight: 700;
+            background: linear-gradient(100deg, #4968d8, #6a7ee5); border: 0;
+            box-shadow: 0 8px 18px rgba(73,104,216,.22); transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .stButton > button[kind="primary"]:hover {transform: translateY(-1px); box-shadow: 0 11px 22px rgba(73,104,216,.28);}
+        [data-testid="stVerticalBlockBorderWrapper"] {background: #fff; border-color: var(--line) !important; border-radius: 20px !important;}
+        .result-card {padding: 1.35rem 1.5rem; border-radius: 18px; margin: 1rem 0 .7rem; border: 1px solid;}
+        .result-positive {background: #edf8f4; border-color: #c5e8db; color: #17634f;}
+        .result-negative {background: #fff1f2; border-color: #f2cbd1; color: #94394a;}
+        .result-card .result-label {font-size: .75rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; opacity: .8;}
+        .result-card .result-value {font-size: 1.65rem; font-weight: 760; margin-top: .25rem;}
+        @media (max-width: 700px) { .block-container {padding: 1.1rem 1rem 2rem;} .hero-card {padding: 1.4rem;} .hero-card h2 {font-size: 1.55rem;} }
         </style>
         """,
         unsafe_allow_html=True,
@@ -133,28 +184,71 @@ def main() -> None:
         st.session_state.history = []
 
     with st.sidebar:
-        st.title("💬 SentimentAI")
-        st.caption("Analyse de sentiment des avis clients")
-        page = st.radio("Navigation", ["Accueil", "Analyser un avis", "Tableau de bord", "Historique"])
+        st.markdown("## 💬 SentimentAI")
+        st.caption("CUSTOMER VOICE ANALYTICS")
+        st.markdown("Analysez le ressenti, simplement.")
+        st.markdown("<br>", unsafe_allow_html=True)
+        page = st.radio(
+            "ESPACE DE TRAVAIL",
+            ["Accueil", "Analyser un avis", "Tableau de bord", "Historique"],
+            key="page_navigation",
+        )
         st.divider()
-        st.caption("Modèle : `model.pkl` · Pipeline TF-IDF + Logistic Regression")
+        st.caption("MODÈLE ACTIF")
+        st.markdown("**TF‑IDF + Logistic Regression**")
+        st.caption("Les résultats sont indicatifs et dépendent de la langue et du domaine des avis.")
 
-    st.title("SentimentAI")
-    st.caption("Comprenez rapidement le ressenti exprimé dans un avis client.")
+    st.markdown('<div class="eyebrow">SENTIMENTAI · CUSTOMER INSIGHTS</div>', unsafe_allow_html=True)
 
     if page == "Accueil":
-        st.markdown("### Une lecture simple des retours clients")
-        st.write(
-            "SentimentAI classe un avis comme **positif** ou **négatif** à l'aide du pipeline "
-            "de Machine Learning entraîné par l'équipe. Le texte est transmis directement au "
-            "pipeline, qui inclut la vectorisation TF-IDF et la régression logistique."
+        st.markdown(
+            "<div class='hero-card'><div class='hero-kicker'>Écoutez la voix de vos clients</div>"
+            "<h2>Transformez les avis en signaux utiles.</h2>"
+            "<p>Une lecture rapide du sentiment exprimé dans chaque commentaire, avec un indicateur de confiance pour guider l’interprétation.</p></div>",
+            unsafe_allow_html=True,
         )
-        st.info("Choisissez **Analyser un avis** dans le menu pour commencer.")
+        left, right = st.columns([1.35, 1])
+        with left:
+            st.markdown("### Commencez une analyse")
+            st.write("Collez un avis, lancez l’analyse et consultez le résultat en quelques secondes.")
+            st.button(
+                "Analyser un avis  →",
+                type="primary",
+                use_container_width=True,
+                on_click=lambda: st.session_state.update({"page_navigation": "Analyser un avis"}),
+            )
+        with right:
+            st.markdown(
+                "<div class='tip-card'><strong>À propos du résultat</strong><br>"
+                "SentimentAI classe les avis en positif ou négatif. Le score de confiance mesure la certitude du modèle, pas la qualité réelle de l’avis."
+                "<br><br><strong>Langue</strong><br>Pour un modèle entraîné sur IMDb, les prédictions sont à interpréter avec prudence pour les avis rédigés dans une autre langue que celle des données d’entraînement.</div>",
+                unsafe_allow_html=True,
+            )
+        st.markdown("### Activité de la session")
         show_dashboard(st.session_state.history)
     elif page == "Analyser un avis":
-        st.subheader("Analyse d'un avis client")
-        review = st.text_area("Votre avis", placeholder="Ex. : La livraison était rapide et le produit est excellent.", height=160)
-        if st.button("Analyser le sentiment", type="primary", use_container_width=True):
+        st.markdown("## Analyse d’un avis")
+        st.caption("Collez un commentaire ci-dessous pour obtenir une prédiction de sentiment.")
+        input_col, guide_col = st.columns([1.65, 1])
+        with input_col:
+            with st.container(border=True):
+                st.markdown("#### Texte à analyser")
+                review = st.text_area(
+                    "Votre avis",
+                    placeholder="Ex. : The product exceeded my expectations. Great quality and fast delivery!",
+                    height=190,
+                    label_visibility="collapsed",
+                )
+                st.caption("Conseil : collez un avis complet pour donner davantage de contexte au modèle.")
+                analyze_clicked = st.button("Analyser le sentiment  →", type="primary", use_container_width=True)
+        with guide_col:
+            st.markdown(
+                "<div class='tip-card'><strong>Comment lire le résultat</strong><br>"
+                "La classe indique le sentiment prédit. Le score reflète la confiance estimée par le modèle ; une confiance faible invite à vérifier le résultat manuellement."
+                "<br><br><strong>À garder en tête</strong><br>Un modèle entraîné sur des avis IMDb en anglais peut être moins fiable sur des textes français ou hors du domaine du cinéma.</div>",
+                unsafe_allow_html=True,
+            )
+        if analyze_clicked:
             if not review.strip():
                 st.warning("Saisissez un avis avant de lancer l'analyse.")
             else:
@@ -171,21 +265,28 @@ def main() -> None:
                         st.error("L'analyse a échoué. Vérifiez le format des labels du modèle et réessayez.")
                     else:
                         add_analysis(review.strip(), sentiment, confidence)
+                        result_class = "result-positive" if sentiment == "Positive" else "result-negative"
+                        sentiment_icon = "✓" if sentiment == "Positive" else "−"
+                        st.markdown(
+                            f"<div class='result-card {result_class}'><div class='result-label'>Sentiment détecté</div>"
+                            f"<div class='result-value'>{sentiment_icon} &nbsp;{sentiment}</div></div>",
+                            unsafe_allow_html=True,
+                        )
                         if confidence is not None and confidence < LOW_CONFIDENCE_THRESHOLD:
-                            st.warning(
-                                f"⚠️ Résultat incertain : le modèle penche vers « {sentiment.lower()} », "
-                                "mais sa confiance est faible. Interprétez cette prédiction avec prudence."
-                            )
-                        elif sentiment == "Positive":
-                            st.success("✅ Avis positif")
-                        else:
-                            st.error("❌ Avis négatif")
+                            st.warning("Confiance faible : cette prédiction est à interpréter avec prudence.")
                         if confidence is not None:
-                            st.metric("Score de confiance", f"{confidence:.1%}")
+                            confidence_col, note_col = st.columns([1, 2])
+                            with confidence_col:
+                                st.metric("Confiance estimée", f"{confidence:.1%}")
+                            with note_col:
+                                st.markdown("##### Niveau de confiance")
+                                st.progress(max(0.0, min(confidence, 1.0)))
+                                st.caption("Indicateur d’incertitude du modèle — ce n’est pas une garantie d’exactitude.")
     elif page == "Tableau de bord":
         show_dashboard(st.session_state.history)
     else:
-        st.subheader("Historique de la session")
+        st.markdown("## Historique de la session")
+        st.caption("Les analyses effectuées pendant cette session sont listées ici.")
         history = st.session_state.history
         if history:
             st.dataframe(pd.DataFrame(history), use_container_width=True, hide_index=True)

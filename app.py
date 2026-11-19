@@ -138,6 +138,15 @@ def main() -> None:
             padding: 1.15rem 1.25rem; color: #33466c; line-height: 1.6;
         }
         .tip-card strong {color: #253a62;}
+        .brand-lockup {display: flex; align-items: center; gap: .72rem; margin: .65rem 0 .55rem;}
+        .brand-mark {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 2.65rem; height: 2.65rem; border-radius: 13px;
+            background: linear-gradient(145deg, #8474f2, #5345c2);
+            box-shadow: 0 7px 18px rgba(83,69,194,.35); font-size: 1.32rem;
+        }
+        .brand-name {color: #fff; font-size: 1.48rem; font-weight: 800; letter-spacing: -.045em; line-height: 1;}
+        .brand-name span {color: #aeb8ff;}
         [data-testid="stSidebar"] {background: linear-gradient(180deg, #17243a 0%, #202f4a 100%);}
         [data-testid="stSidebar"] * {color: #e8eef9;}
         [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {color: #aebbd0;}
@@ -198,7 +207,11 @@ def main() -> None:
         st.session_state.history = []
 
     with st.sidebar:
-        st.markdown("## 💬 SentimentAI")
+        st.markdown(
+            "<div class='brand-lockup'><span class='brand-mark'>💬</span>"
+            "<span class='brand-name'>Sentiment<span>AI</span></span></div>",
+            unsafe_allow_html=True,
+        )
         st.caption("CUSTOMER VOICE ANALYTICS")
         st.markdown("Analysez le ressenti, simplement.")
         st.markdown("<br>", unsafe_allow_html=True)
